@@ -148,9 +148,86 @@
         }
       }
       var add_ltd = limit(add, 2);
-      log(add_ltd(3, 4)); // 7
-      log(add_ltd(3, 5)); // 8
-      log(add_ltd(3, 6)); // undefined
+      // log(add_ltd(3, 4)); // 7
+      // log(add_ltd(3, 5)); // 8
+      // log(add_ltd(3, 6)); // undefined
+
+      // Write a from function that produces a generator
+      // that will produce a series of values.
+      function from(x) {
+        return function () {
+          var count = x;
+          x += 1;
+          return count;
+        }
+      }
+      var index = from(0);
+      // log(index()); // 0
+      // log(index()); // 1
+      // log(index()); // 2
+
+      // Write a to function that takes a generator and an end value,
+      // and returns a generator that will produce numbers up to that limit.
+      function to(generator, endValue) {
+        return function () {
+          var value = generator();
+          if (value < endValue) {
+            return value;
+          } else {
+            return undefined;
+          }
+        }
+      }
+      var index = to(from(1), 3);
+      // log(index()); // 1
+      // log(index()); // 2
+      // log(index()); // undefined
+
+      // Write a fromTo function that produces a generator
+      // that will produce values in a range.
+      function fromTo(startValue, endValue) {
+        return to(from(startValue), endValue);
+      }
+      var index = fromTo(0, 3);
+      // log(index()); // 0
+      // log(index()); // 1
+      // log(index()); // 2
+      // log(index()); // undefined
+
+      // Write an element function that takes an array and a generator
+      // and returns a generator that will produce elements from the array.
+      function element(arr, generator) {
+        return function () {
+          var index = generator();
+          if (index !== undefined) {
+            return arr[index];
+          }
+        }
+      }
+      var ele = element(['a', 'b', 'c', 'd'], fromTo(1, 3));
+      // log(ele()); // 'b'
+      // log(ele()); // 'c'
+      // log(ele()); // undefined
+
+      // Modify the element function so that the generator argument is optional.
+      // If a generator is not provided, then each of the elements of the array will be produced.
+      function element(arr, generator) { // ES6: generator = fromTo(...)
+        if (generator === undefined) {
+          generator = fromTo(0, arr.length);
+        }
+        return function () {
+          var index = generator();
+          if (index !== undefined) {
+            return arr[index];
+          }
+        }
+      }
+      var ele = element(['a', 'b', 'c', 'd']);
+      log(ele()); // 'a'
+      log(ele()); // 'b'
+      log(ele()); // 'c'
+      log(ele()); // 'd'
+      log(ele()); // undefined
     </script>
   </pre>
 </body>
