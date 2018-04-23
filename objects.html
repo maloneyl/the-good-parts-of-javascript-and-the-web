@@ -18,6 +18,10 @@
         return first * second;
       }
 
+      function square(x) {
+        return x * x;
+      }
+
       // Write a counter function that returns an object
       // containing two functions that implement an up/down counter,
       // hiding the counter.
@@ -123,6 +127,35 @@
       // log(JSON.stringify(addm(m(3), m(4))));
       // log(JSON.stringify(addm(3, 4)));
       // log(JSON.stringify(addm(m(3), 4)));
+
+      // Write a function exp that evalutes simple array expressions.
+      // A simple array expression is an array in which
+      // the first element is a function,
+      // and the remaining elements are the arguments to that function.
+      function exp(sae) {
+        return (
+          Array.isArray(sae) ? sae[0](sae[1], sae[2]) : sae
+        );
+      }
+      // var sae = [mul, 5, 11];
+      // log(exp(sae)); // 55
+      // log(exp(42)); // 42
+
+      // Modify exp so that it can take nested array expressions.
+      function exp(nae) {
+        return (
+          Array.isArray(nae) ? nae[0](exp(nae[1]), exp(nae[2])) : nae
+        )
+      }
+      var nae = [
+        Math.sqrt,
+        [
+          add,
+          [square, 3],
+          [square, 4]
+        ]
+      ];
+      log(exp(nae)); // 5, sqrt of 9+16=25
     </script>
   </pre>
 </body>
