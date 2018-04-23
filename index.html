@@ -319,12 +319,74 @@
       //   }
       // }
       var con = concat(fromTo(0, 3), fromTo(0, 2));
-      log(con()); // 0
-      log(con()); // 1
-      log(con()); // 2
-      log(con()); // 0
-      log(con()); // 1
-      log(con()); // undefined
+      // log(con()); // 0
+      // log(con()); // 1
+      // log(con()); // 2
+      // log(con()); // 0
+      // log(con()); // 1
+      // log(con()); // undefined
+
+      // Make a function gensymf that makes a function that generates unique symbols.
+      function gensymf(prefix) {
+        var generator = from(1);
+        return function () {
+          return prefix + generator();
+        }
+      }
+      // official solution:
+      // function gensymf(prefix) {
+      //   var number = 0;
+      //   return function () {
+      //     number += 1;
+      //     return prefix + number;
+      //   }
+      // }
+      var geng = gensymf("G");
+      var genh = gensymf("H");
+      // log(geng()); // 'G1'
+      // log(genh()); // 'H1'
+      // log(geng()); // 'G2'
+      // log(genh()); // 'H2'
+
+      // Write a function gensymff that takes a unary function and a seed
+      // and returns a geynsymf.
+      function gensymff(unaryFunc, seed) {
+        return function (prefix) {
+          var number = seed; // note this here so we don't get G1, H2, G3, H4
+          return function () {
+            number = unaryFunc(number);
+            return prefix + number;
+          }
+        }
+      }
+      var geynsymf = gensymff(inc, 0),
+          geng = gensymf("G"),
+          genh = gensymf("H");
+      // log(geng()); // 'G1'
+      // log(genh()); // 'H1'
+      // log(geng()); // 'G2'
+      // log(genh()); // 'H2'
+
+      // Make a function fibonaccif that returns a generator
+      // that will return the next fibonacci number.
+      function fibonaccif(a, b) {
+        return concat(
+          element([0, 1]),
+          function fibonacci() {
+            var next = a + b;
+            a = b;
+            b = next;
+            return next;
+          }
+        )
+      }
+      var fib = fibonaccif(0, 1);
+      log(fib()); // 0
+      log(fib()); // 1
+      log(fib()); // 1
+      log(fib()); // 2
+      log(fib()); // 3
+      log(fib()); // 5
     </script>
   </pre>
 </body>
