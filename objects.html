@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fun with Functions</title>
+</head>
+<body>
+  <pre>
+    <script>
+      function log(arg) {
+        document.writeln(arg);
+      }
+
+      // Write a counter function that returns an object
+      // containing two functions that implement an up/down counter,
+      // hiding the counter.
+      function counter(value) {
+        return {
+          up: function () {
+            value += 1
+            return value;
+          },
+          down: function () {
+            value -= 1
+            return value;
+          }
+        }
+      }
+      // var object = counter(10),
+      //     up = object.up,
+      //     down = object.down;
+      // log(up()); // 11
+      // log(down()); // 10
+      // log(down()); // 9
+      // log(up()); // 10
+
+      // Make a revocable function that takes a binary function,
+      // and returns an object containing
+      // an invoke function that can invoke the binary function,
+      // and a revoke function that disables the invoke function.
+      function revocable(binaryFunc) {
+        return {
+          invoke: function (x, y) {
+            if (binaryFunc !== undefined) {
+              return binaryFunc(x, y);
+            }
+          },
+          revoke: function () {
+            binaryFunc = undefined; // yes, once it's gone, it's gone
+          }
+        }
+      }
+
+      function add(first, second) {
+        return first + second;
+      }
+
+      var rev = revocable(add),
+          add_rev = rev.invoke;
+      log(add_rev(3, 4)); // 7
+      rev.revoke();
+      log(add_rev(5, 7)); // undefined
+      console.log(rev);
+    </script>
+  </pre>
+</body>
+</html>
