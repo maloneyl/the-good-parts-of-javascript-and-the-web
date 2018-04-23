@@ -39,8 +39,7 @@
       // var three = identityf(3);
       // log(three());
 
-      // Write a function addf that adds from two invocations, e.g.
-      //   addf(3)(4) // 7
+      // Write a function addf that adds from two invocations.
       function addf(first) {
         return function (second) {
           return first + second;
@@ -50,11 +49,8 @@
 
       // Write a function liftf that takes a binary function,
       // and makes it callable with two invocations.
-      //   var addf = liftf(add);
-      //   addf(3)(4) // 7
-      //   liftf(mul)(5)(6) // 30
       // Higher-order functions: receive other functions as parameters,
-      //   and return other functions as results.
+      // and return other functions as results.
       function liftf(binaryFunc) {
         return function (first) {
           return function (second) {
@@ -62,9 +58,35 @@
           }
         }
       }
-      var addf = liftf(add);
-      log(addf(3)(4));
-      log(liftf(mul)(5)(6));
+      // var addf = liftf(add);
+      // log(addf(3)(4));
+      // log(liftf(mul)(5)(6));
+
+      // Write a function curry that takes a binary function as an argument,
+      // and return a function that can take a second argument.
+      function curry(binaryFunc, first) {
+        return function (second) {
+          return binaryFunc(first, second);
+        }
+        // alternative: use liftf
+        //   return liftf(binaryFunc)(first);
+      }
+      // var add3 = curry(add, 3);
+      // log(add3(4));
+      // log(curry(mul, 5)(6));
+      // Curry was a mathematician who did a lot of work with Church's lambda calculus.
+      // By normalizing all functions to take only one argument,
+      // it made a lot of operations easier to think about.
+
+      // Without writing any new functions,
+      // show three ways to create the inc function.
+      var inc = curry(add, 1);
+      var inc = liftf(add)(1);
+      var inc = addf(1);
+      // log(inc(5));
+      // log(inc(inc(5)));
+      // First rule of functional programming: let the functions do the work.
+      // If you've already written a function that does what you need, you don't need to write another one.
     </script>
   </pre>
 </body>
