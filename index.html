@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fun with Functions</title>
+</head>
+<body>
+  <pre>
+    <script>
+      function log(arg) {
+        document.writeln(arg);
+      }
+
+      function identity(x) {
+        return x;
+      }
+      // log(identity(3));
+
+      function add(first, second) {
+        return first + second;
+      }
+
+      function sub(first, second) {
+        return first - second;
+      }
+
+      function mul(first, second) {
+        return first * second;
+      }
+
+      // log(add(3, 4));
+      // log(sub(3, 4));
+      // log(mul(3, 4));
+
+      function identityf(x) {
+        return function() {
+          return x;
+        }
+      }
+      // var three = identityf(3);
+      // log(three());
+
+      // Write a function addf that adds from two invocations, e.g.
+      //   addf(3)(4) // 7
+      function addf(first) {
+        return function (second) {
+          return first + second;
+        }
+      }
+      // log(addf(3)(4));
+
+      // Write a function liftf that takes a binary function,
+      // and makes it callable with two invocations.
+      //   var addf = liftf(add);
+      //   addf(3)(4) // 7
+      //   liftf(mul)(5)(6) // 30
+      // Higher-order functions: receive other functions as parameters,
+      //   and return other functions as results.
+      function liftf(binaryFunc) {
+        return function (first) {
+          return function (second) {
+            return binaryFunc(first, second);
+          }
+        }
+      }
+      var addf = liftf(add);
+      log(addf(3)(4));
+      log(liftf(mul)(5)(6));
+    </script>
+  </pre>
+</body>
+</html>
