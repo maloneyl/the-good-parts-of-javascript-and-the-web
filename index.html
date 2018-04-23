@@ -223,11 +223,108 @@
         }
       }
       var ele = element(['a', 'b', 'c', 'd']);
-      log(ele()); // 'a'
-      log(ele()); // 'b'
-      log(ele()); // 'c'
-      log(ele()); // 'd'
-      log(ele()); // undefined
+      // log(ele()); // 'a'
+      // log(ele()); // 'b'
+      // log(ele()); // 'c'
+      // log(ele()); // 'd'
+      // log(ele()); // undefined
+
+      // Write a collect function that takes a generator and an array
+      // and produces a function that will collect the results in the array.
+      function collect(generator, arr) {
+        return function () {
+          var value = generator();
+          if (value !== undefined) {
+            arr.push(value);
+          }
+          return value;
+        }
+      }
+      var arr = [],
+          col = collect(fromTo(0, 2), arr);
+      // log(col()); // 0
+      // log(col()); // 1
+      // log(col()); // undefined
+      // log(arr); // [0, 1]
+
+      // Write a filter function that takes a generator and a predicate
+      // (a predicate is a function that returns a boolean),
+      // and produces a generator that produces only the values approved
+      // by the predicate.
+      function filter(generator, predicate) {
+        return function () {
+          var value;
+          do {
+            value =  generator();
+          } while (
+            (value !== undefined) && (!predicate(value))
+          );
+          return value;
+        }
+      }
+      // ES6: tail recursion (the compiler is required to optimize the call)
+      // function filter(generator, predicate) {
+      //   return function recur() {
+      //     var value = generator();
+      //     if (
+      //       (value === undefined) || predicate(value)
+      //     ) {
+      //       return value;
+      //     }
+      //     return recur();
+      //   }
+      // }
+      var fil = filter(
+        fromTo(0, 5),
+        function third(value) {
+          return (value % 3) === 0;
+        }
+      );
+      // log(fil()); // 0
+      // log(fil()); // 3
+      // log(fil()); // undefined
+
+      // Write a concat function that takes two generators
+      // and produces a generator that combines the sequences.
+      function concat(generator1, generator2) {
+        // var completedGenerators = []
+        var generator = generator1;
+
+        return function () {
+          var value = generator();
+          if (value !== undefined) {
+            return value;
+          }
+          // completedGenerators.push(generator);
+          // if (completedGenerators.length < 2) {
+            generator = generator2;
+            return generator();
+          // }
+          // return undefined;
+        }
+      }
+      // ES6, any number of generators:
+      // function concat(...generators) {
+      //   var next = element(generators),
+      //       generator = next();
+      //   return function recur() {
+      //     var value = generator();
+      //     if (value === undefined) {
+      //       generator = next();
+      //       if (generator !== undefined) {
+      //         return recur();
+      //       }
+      //     }
+      //     return value;
+      //   }
+      // }
+      var con = concat(fromTo(0, 3), fromTo(0, 2));
+      log(con()); // 0
+      log(con()); // 1
+      log(con()); // 2
+      log(con()); // 0
+      log(con()); // 1
+      log(con()); // undefined
     </script>
   </pre>
 </body>
