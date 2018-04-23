@@ -87,6 +87,70 @@
       // log(inc(inc(5)));
       // First rule of functional programming: let the functions do the work.
       // If you've already written a function that does what you need, you don't need to write another one.
+
+      // Write a function twice that takes a binary function
+      // and returns a unary function
+      // that passes its argument to the binary function twice,
+      // e.g. doubl = twice(add); square = twice(mul);
+      function twice(binaryFunc) {
+        return function (x) {
+          return binaryFunc(x, x)
+        }
+      }
+      var doubl = twice(add);
+      // log(doubl(11));
+      var square = twice(mul);
+      // log(square(11));
+
+      // Write reverse, a function that reverses
+      // the arguments of a binary function.
+      function reverse(binaryFunc) {
+        return function (first, second) {
+          return binaryFunc(second, first);
+        }
+      }
+      // with ES6 and for any number of arguments:
+      // function reverse(func) {
+      //   return function(...args) {
+      //     return func(...args.reverse());
+      //   }
+      // }
+      var bus = reverse(sub);
+      // log(bus(3, 2)); // -1
+
+      // Write a function composeu that takes two unary functions
+      // and returns a unary function that calls them both,
+      function composeu(func1, func2) {
+        return function (x) {
+          return func2(func1(x));
+        }
+      }
+      // log(composeu(doubl, square)(5)); // (5+5)^2 = 100
+
+      // Write a function composeb that takes two binary functions
+      // and returns a function that calls them both.
+      function composeb(binaryFunc1, binaryFunc2) {
+        return function (x, y, z) {
+          return binaryFunc2(binaryFunc1(x, y), z);
+        }
+      }
+      // log(composeb(add, mul)(2, 3, 7)); // (2+3) *  7 = 35
+
+      // Write a limit function that allows a binary function
+      // to be called a limited number of times.
+      function limit(binaryFunc, count) {
+        return function (x, y) {
+          if (count >= 1) {
+            count -= 1;
+            return binaryFunc(x, y)
+          }
+          return undefined; // explicitly document the behavior
+        }
+      }
+      var add_ltd = limit(add, 2);
+      log(add_ltd(3, 4)); // 7
+      log(add_ltd(3, 5)); // 8
+      log(add_ltd(3, 6)); // undefined
     </script>
   </pre>
 </body>
