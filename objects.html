@@ -10,6 +10,14 @@
         document.writeln(arg);
       }
 
+      function add(first, second) {
+        return first + second;
+      }
+
+      function mul(first, second) {
+        return first * second;
+      }
+
       // Write a counter function that returns an object
       // containing two functions that implement an up/down counter,
       // hiding the counter.
@@ -50,16 +58,71 @@
         }
       }
 
-      function add(first, second) {
-        return first + second;
-      }
+      // var rev = revocable(add),
+      //     add_rev = rev.invoke;
+      // log(add_rev(3, 4)); // 7
+      // rev.revoke();
+      // log(add_rev(5, 7)); // undefined
+      // console.log(rev);
 
-      var rev = revocable(add),
-          add_rev = rev.invoke;
-      log(add_rev(3, 4)); // 7
-      rev.revoke();
-      log(add_rev(5, 7)); // undefined
-      console.log(rev);
+      // Write a function m that takes a value and an optional source string
+      // and returns them in an object.
+      function m(value, source) {
+        return {
+          value,
+          source: (typeof source === 'string') ? source : String(value)
+        }
+      }
+      // log(JSON.stringify(m(1))); // {"value": 1, "source": "1"}
+      // log(JSON.stringify(m(Math.PI, 'pi'))); // {"value": 3.14159..., "source": "pi"}
+
+      // Write a function addm that takes two m objects and returns an m object.
+      function addm(m1, m2) {
+        return m(
+          m1.value + m2.value,
+          `(${m1.source}+${m2.source})`
+        )
+      }
+      // log(JSON.stringify(addm(m(3), m(4)))); // {"value": 1, "source": "1"}
+      // log(JSON.stringify(addm(m(1), m(Math.PI, 'pi')))); // {"value": 3.14159..., "source": "pi"}
+
+      // Write a function liftm that takes a binary function and a string
+      // and returns a function that acts on m objects.
+      // Monad: A thing where you can take functions and lift them up
+      // to a higher level where they can have or acquire some new capability.
+      function liftm(binaryFunc, opSign) {
+        return function (m1, m2) {
+          return m(
+            binaryFunc(m1.value, m2.value),
+            '(' + m1.source + opSign + m2.source + ')'
+          )
+        }
+      }
+      // var addm = liftm(add, "+");
+      // log(JSON.stringify(addm(m(3), m(4))));
+      // var mulm = liftm(mul, "*");
+      // log(JSON.stringify(mulm(m(3), m(4))));
+
+      // Modify function liftm so that the functions it produces
+      // can accept arguments that are either numbers or m objects
+      function liftm(binaryFunc, opSign) {
+        return function (x, y) {
+          if (typeof x === 'number') {
+            x = m(x);
+          }
+          if (typeof y === 'number') {
+            y = m(y);
+          }
+          return m(
+            binaryFunc(x.value, y.value),
+            '(' + x.source + opSign + y.source + ')'
+          );
+        }
+      }
+      // var addm = liftm(add, "+");
+      // log(JSON.stringify(addm(m(3), m(4))));
+      // log(JSON.stringify(addm(3, 4)));
+      // log(JSON.stringify(addm(m(3), 4)));
     </script>
   </pre>
 </body>
