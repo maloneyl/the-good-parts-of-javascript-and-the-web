@@ -155,7 +155,93 @@
           [square, 4]
         ]
       ];
-      log(exp(nae)); // 5, sqrt of 9+16=25
+      // log(exp(nae)); // 5, sqrt of 9+16=25
+
+      // Write a function addg that adds from many invocations,
+      // until it sees an empty invocation.
+      function addg(first) {
+        function more(next) {
+          if (next === undefined) {
+            return first;
+          }
+          first += next;
+          return more; // retursion: a function return itself
+        }
+        if (first !== undefined) {
+          return more;
+        }
+      }
+      // log(addg()); // undefined
+      // log(addg(2)()); // 2
+      // log(addg(2)(7)()); // 9
+      // log(addg(3)(0)(4)()); // 7
+      // log(addg(1)(2)(4)(8)()); // 15
+
+      // Write a function liftg that will take a binary function
+      // and apply it to many invocations.
+      function liftg(binaryFunc) {
+        return function (first) {
+          if (first === undefined) {
+            return first;
+          }
+          return function more(next) {
+            if (next === undefined) {
+              return first;
+            }
+            first = binaryFunc(first, next);
+            return more;
+          }
+        }
+      }
+      // log(liftg(mul)()); // undefined
+      // log(liftg(mul)(3)()); // 3
+      // log(liftg(mul)(3)(0)(4)()); // 0
+      // log(liftg(mul)(1)(2)(4)(8)()); // 64
+
+      // Write a function arrayg that will build an array
+      // from many invocations.
+      function arrayg(first) {
+        var arr = [];
+        function more(next) {
+          if (next === undefined) {
+            return arr;
+          }
+          arr.push(next);
+          return more;
+        }
+        return more(first);
+      }
+      // Alternative using liftg 🤯:
+      // function arrayg(first) {
+      //   if (first === undefined) {
+      //     return []
+      //   };
+      //   return liftg(
+      //     function (array, value) {
+      //       array.push(value);
+      //       return array
+      //     }
+      //   )([first]);
+      // }
+      // log(arrayg()); // []
+      // log(arrayg(3)()); // [3]
+      // log(arrayg(3)(4)(5)()); // [3, 4, 5]
+
+      // Make a function continuize that takes a unary function,
+      // and returns a function that takes a callback and an argument.
+      function continuize(unaryFunc) {
+        return function(cb, arg) {
+          cb(unaryFunc(arg));
+        }
+      }
+      // Version for any type of function:
+      // function continuize(any) {
+      //   return function (cb, ...x) {
+      //     return cb(any(...x));
+      //   }
+      // }
+      // sqrtc = continuize(Math.sqrt);
+      // sqrtc(alert, 81); // 9 in an alert
     </script>
   </pre>
 </body>
