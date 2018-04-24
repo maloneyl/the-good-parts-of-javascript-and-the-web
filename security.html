@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fun with Functions</title>
+</head>
+<body>
+  <pre>
+    <script>
+      function log(arg) {
+        document.writeln(arg);
+      }
+
+      // Make an array wrapper object with methods
+      // get, store and append,
+      // such that an attacker cannot get access to the private array.
+      function vector() {
+        var array = [];
+
+        return {
+          get: function (i) {
+            return array[i];
+          },
+          store: function (i, val) {
+            array[i] = val;
+          },
+          append: function (val) {
+            array.push(val);
+          }
+        }
+      }
+      myvector = vector();
+      myvector.append(7);
+      myvector.store(1, 8);
+      log(myvector.get(0)); // 7
+      log(myvector.get(1)); // 8
+
+      // BUT you can actually exploit this
+      var stash;
+      myvector.store('push', function() { // remember we don't actually have arrays in this language
+        stash = this; // remember `this` is bound dynamically
+      });
+      myvector.append(); // to call .push
+      stash; //  [7, 8, push: ƒ]
+
+      // FIX
+      function vector() {
+        var array = [];
+
+        return {
+          get: function (i) {
+            return array[+i]; // turn string into number, so 'push' becomes NaN
+          },
+          store: function (i, val) {
+            array[+i] = val;
+          },
+          append: function (val) {
+            array[array.length] = val; // don't use .push
+          }
+        }
+      }
+    </script>
+  </pre>
+</body>
+</html>
