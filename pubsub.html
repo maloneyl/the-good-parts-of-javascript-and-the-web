@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fun with Functions</title>
+</head>
+<body>
+  <pre>
+    <script>
+      function log(arg) {
+        document.writeln(arg);
+      }
+
+      // Make a function that makes a publish/subscribe object.
+      // It will reliably deliver all publications to all subscribers
+      // in the right order.
+      // function pubsub() {
+      //   var subscribers = [];
+      //   return {
+      //     subscribe: function (subscriber) {
+      //       subscribers.push(subscriber);
+      //     },
+      //     publish: function (message) {
+      //       var i, length = subscribers.length;
+      //       for (i = 0; i < length; i += 1) {
+      //         subscribers[i](message);
+      //       }
+      //     },
+      //   }
+      // }
+      // pubsub1 = pubsub();
+      // pubsub1.subscribe(log);
+      // pubsub1.publish("It works!"); // log("It works!")
+
+      // // BUT you can kill publish for everybody after you by:
+      // pubsub1.subscribe(); // which pushes 'undefined' to subscribers
+      // pubsub1.publish("Errors"); // Uncaught TypeError: subscriber is not a function
+
+      // // FIX
+      // function pubsub() {
+      //   var subscribers = [];
+      //   return {
+      //     subscribe: function (subscriber) {
+      //       subscribers.push(subscriber);
+      //     },
+      //     publish: function (message) {
+      //       var i, length = subscribers.length;
+      //       for (i = 0; i < length; i += 1) {
+      //         try { // catch this
+      //           subscribers[i](message);
+      //         } catch (ignore) {}
+      //       }
+      //     },
+      //   }
+      // }
+      // pubsub2 = pubsub();
+      // pubsub2.subscribe(log);
+      // pubsub2.publish("It works!"); // log("It works!")
+      // pubsub2.subscribe();
+      // pubsub2.publish("It still works!"); // log("It still works!")
+
+      // // ANOTHER possible problem:
+      // pubsub2.publish = undefined;
+      // pubsub2.publish("Hi"); // Uncaught TypeError: pubsub2.publish is not a function
+
+      // // FIX
+      // function pubsub() {
+      //   var subscribers = [];
+      //   return Object.freeze({ // freeze it
+      //     subscribe: function (subscriber) {
+      //       subscribers.push(subscriber);
+      //     },
+      //     publish: function (message) {
+      //       var i, length = subscribers.length;
+      //       for (i = 0; i < length; i += 1) {
+      //         try {
+      //           subscribers[i](message); // calling a function stored in an array is still a method invocation
+      //         } catch (ignore) {}
+      //       }
+      //     }
+      //   })
+      // }
+      // pubsub3 = pubsub();
+      // pubsub3.subscribe(log);
+      // pubsub3.subscribe();
+      // pubsub3.publish("It still works!"); // log("It still works!")
+      // pubsub3.publish = undefined;
+      // pubsub3.publish("Hi again, still works"); log("Hi again, still works")
+
+      // // BUT you can still kill all the subscribers with
+      // pubsub3.subscribe(function() { this.length = 0; });
+      // // this function is passed to subscribe, which is stored in the subscribers array;
+      // // then when .publish is called, `subscribers[i](message)` calls the function stored in the subscribers array,
+      // // which sets the subscribers array's length to 0.
+
+      // // FIX
+      // function pubsub() {
+      //   var subscribers = [];
+      //   return Object.freeze({
+      //     subscribe: function (subscriber) {
+      //       subscribers.push(subscriber);
+      //     },
+      //     publish: function (message) {
+      //       subscribers.forEach(function (subscriber) { // use forEach
+      //         try {
+      //           subscriber(message);
+      //         } catch (ignore) {}
+      //       })
+      //     }
+      //   })
+      // }
+      // pubsub4 = pubsub();
+      // pubsub4.subscribe(log);
+      // pubsub4.subscribe();
+      // pubsub4.publish("It still works!"); // log("It still works!")
+      // pubsub4.publish = undefined;
+      // pubsub4.publish("Hi again, still works"); log("Hi again, still works")
+      // pubsub4.subscribe(function() { this.length = 0; });
+      // pubsub4.publish("Hey");
+
+      // // BUT you can still make the messages out of order
+      // // from earlier exercise:
+      // // limit function that allows a binary function
+      // // to be called a limited number of times.
+      function limit(binaryFunc, count) {
+        return function (x, y) {
+          if (count >= 1) {
+            count -= 1;
+            return binaryFunc(x, y)
+          }
+          return undefined; // explicitly document the behavior
+        }
+      }
+      // // use limit so it's not just a DOS attack
+      // pubsub4.subscribe(limit(function () {
+      //   pubsub4.publish("Out of order")
+      // }), 1);
+
+      // FIX
+      function pubsub() {
+        var subscribers = [];
+        return Object.freeze({
+          subscribe: function (subscriber) {
+            subscribers.push(subscriber);
+          },
+          publish: function (message) {
+            subscribers.forEach(function (subscriber) {
+              setTimeout(function() {
+                subscriber(message)
+              }, 0)
+            })
+          }
+        })
+      }
+      pubsub5 = pubsub();
+      pubsub5.subscribe(log);
+      pubsub5.subscribe();
+      pubsub5.publish("It still works!"); // log("It still works!")
+      pubsub5.publish = undefined;
+      pubsub5.publish("Hi again, still works"); log("Hi again, still works")
+      pubsub5.subscribe(function() { this.length = 0; });
+      pubsub5.publish("Hey");
+      pubsub5.subscribe(limit(function () {
+        pubsub5.publish("Out of order")
+      }), 1);
+      pubsub5.publish("Another");
+
+    </script>
+  </pre>
+</body>
+</html>
